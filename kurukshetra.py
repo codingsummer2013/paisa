@@ -2,8 +2,9 @@ import time
 
 from kiteconnect import KiteConnect
 
+from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock
-from helpers.karna import execute_buy_order
+from helpers.karna import execute_buy_order, execute_sell_order
 from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
@@ -47,14 +48,33 @@ def khareed_arambh(stock):
                 except Exception as e:
                     print("Exception occured for stock", stock_historical, e)
                     time.sleep(10)
-        time.sleep(20)
 
     except Exception as e:
         print("Exception occurred, Skipping the instance", e, stock)
+
+def becho_re():
+    for stock in kite.holdings():
+        if stock['average_price'] == 0:
+            continue
+        change = (100 * (stock['last_price'] - stock['average_price']) / stock['average_price'])
+        print("Stock ", stock['tradingsymbol'], " Change", change)
+        if stock['day_change_percentage'] > 0.5 and change > 2:
+            quantity = stock["quantity"] + stock["t1_quantity"]
+            today_quantity = 0
+            for order in kite.orders():
+                if (order['status'] != 'REJECTED' and order['status'] != 'CANCELLED') and order['tradingsymbol'] == stock['tradingsymbol']:
+                    if order['transaction_type'] == 'SELL':
+                        today_quantity = today_quantity - order['quantity']
+                    if order['transaction_type'] == 'BUY':
+                        today_quantity = today_quantity + order['quantity']
+                    quantity = quantity + today_quantity
+                print ("Selling Stock ", stock['tradingsymbol'], " Change", change, quantity)
+                execute_sell_order(stock['tradingsymbol'], quantity, selling_price(stock['last_price']))
 
 while True:
     nifty200 = get_nifty_200_list()
     for stock in nifty200:
         khareed_arambh(stock)
+    becho_re()
     time.sleep(60)
 

@@ -5,3 +5,9 @@ def get_percentage_diff(previous, current):
         percentage = float('inf')
     return percentage
 
+
+def selling_price(price):
+    price = int(price * 101)
+    while price % 5 != 0:
+        price += 1
+    return float(float(price) / float(100))
