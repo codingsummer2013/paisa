@@ -5,12 +5,11 @@ from kiteconnect import KiteConnect
 from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock
 from helpers.karna import execute_buy_order, execute_sell_order
-from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list
+from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list, purchase_percentile
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 token = open("helpers/request_token.txt", "r")
 kite.set_access_token(token.readline())
-
 
 
 def khareed_arambh(stock):
@@ -29,28 +28,16 @@ def khareed_arambh(stock):
             if holding['tradingsymbol'] == stock and holding_price > holding['average_price']:
                 holding_price = holding['average_price']
         for pos in kite.positions()['day']:
-            if pos['tradingsymbol'] == stock_historical["name"] and pos['average_price'] != 0 and holding_price > pos[
-                'average_price']:
+            if pos['tradingsymbol'] == stock_historical["name"] and pos['average_price'] != 0 and \
+                    holding_price > pos['average_price']:
                 holding_price = pos['average_price']
         change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
         print("Change for ", cur_stock_name, " ", change, " ", cur_price, " & holding", holding_price)
-        trade_amount = 0
-        for pos in kite.positions()['day']:
-            if pos['tradingsymbol'] == stock_historical["name"]:
-                trade_amount = pos['average_price'] * pos['quantity']
-        if trade_amount > 50000:
-            print("Trade amount reached", cur_stock_name)
-            return
-        else:
-            if change < -1 and cur_price < prev_day_closing_price:
-                try:
-                    execute_buy_order(stock_historical["name"], int(10000 / cur_price), cur_price)
-                except Exception as e:
-                    print("Exception occured for stock", stock_historical, e)
-                    time.sleep(10)
-
+        if change < purchase_percentile(stock_historical["name"]) and cur_price < prev_day_closing_price:
+            execute_buy_order(stock_historical["name"], cur_price)
     except Exception as e:
         print("Exception occurred, Skipping the instance", e, stock)
+
 
 def becho_re():
     for stock in kite.holdings():
@@ -68,13 +55,18 @@ def becho_re():
                     if order['transaction_type'] == 'BUY':
                         today_quantity = today_quantity + order['quantity']
                     quantity = quantity + today_quantity
-                print ("Selling Stock ", stock['tradingsymbol'], " Change", change, quantity)
-                execute_sell_order(stock['tradingsymbol'], quantity, selling_price(stock['last_price']))
+            print ("Selling Stock ", stock['tradingsymbol'], " Change", change, quantity)
+            execute_sell_order(stock['tradingsymbol'], quantity, selling_price(stock['last_price']))
 
-while True:
+
+def khareedo_re():
     nifty200 = get_nifty_200_list()
     for stock in nifty200:
         khareed_arambh(stock)
+
+
+while True:
+    khareedo_re()
     becho_re()
     time.sleep(60)
 

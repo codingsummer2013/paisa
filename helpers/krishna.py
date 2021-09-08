@@ -1,7 +1,18 @@
 import os
 
+from kiteconnect import KiteConnect
+
+kite = KiteConnect(api_key="tf77pivddr8pmyin")
+directory = os.path.dirname(__file__)
+filename = os.path.join(directory, 'request_token.txt')
+token = open(filename, "r")
+kite.set_access_token(token.readline())
+
+
 nifty50 = []
 nifty200 = []
+blacklist_sell = []
+blacklist_buy = []
 
 
 def read_nifty_50():
@@ -49,8 +60,92 @@ def get_nifty_200_list():
     return nifty200
 
 
-def is_nifty_50(stock):
+def is_nifty_200(stock):
     read_nifty_200()
     if stock in nifty200:
         return True
     return False
+
+
+def read_blacklist_buy():
+    global blacklist_buy
+    blacklist_buy = []
+    directory = os.path.dirname(__file__)
+    filename = os.path.join(directory, '../data/blacklist_to_buy.txt')
+    blacklist_buy_file = open(filename, "r")
+    while 1:
+        # reading the file
+        line = blacklist_buy_file.readline()
+        if len(line) == 0:
+            break
+        blacklist_buy.append(line.strip())
+
+
+def is_blacklist_buy(stock):
+    read_blacklist_buy()
+    if stock in blacklist_buy:
+        return True
+    return False
+
+
+def read_blacklist_sell():
+    global blacklist_sell
+    blacklist_sell = []
+    directory = os.path.dirname(__file__)
+    filename = os.path.join(directory, '../data/blacklist_to_sell.txt')
+    blacklist_sell_file = open(filename, "r")
+    while 1:
+        # reading the file
+        line = blacklist_sell_file.readline()
+        if len(line) == 0:
+            break
+        blacklist_sell.append(line.strip())
+
+
+def is_blacklist_sell(stock):
+    read_blacklist_sell()
+    if stock in blacklist_sell:
+        return True
+    return False
+
+
+def portfolio_amount(name):
+    holdings = kite.holdings()
+    amount=0
+    for holding in holdings:
+        if holding['tradingsymbol'] == name:
+            amount = holding['average_price'] * (holding['t1_quantity'] + holding['quantity'])
+    return amount
+
+
+def get_stock_amount(name):
+    if is_nifty_50(name):
+        return 200000
+    else:
+        return 100000
+
+
+def today_trading_amount(name):
+    trade_amount=0
+    for pos in kite.positions()['day']:
+        if pos['tradingsymbol'] == name:
+            trade_amount = pos['average_price'] * pos['quantity']
+    return trade_amount
+
+
+def get_quantity_bucket(name, price):
+    if is_nifty_50(name):
+        quantity = int(20000 / price)
+    else:
+        quantity = int(10000 / price)
+    return max(quantity, 1)
+
+
+def purchase_percentile(name):
+    if is_nifty_50(name):
+        return -0.5
+    else:
+        return -1
+
+
+
