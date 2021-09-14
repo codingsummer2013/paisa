@@ -119,6 +119,9 @@ def portfolio_amount(name):
 
 
 def get_stock_amount(name):
+    custom_amount = get_custom_trade_limit(name)
+    if custom_amount is not None:
+        return custom_amount
     if is_nifty_50(name):
         return 200000
     else:
@@ -133,11 +136,25 @@ def today_trading_amount(name):
     return trade_amount
 
 
+def get_custom_trade_limit(name):
+    directory = os.path.dirname(__file__)
+    filename = os.path.join(directory, '../data/shakuni.txt')
+    trade_file = open(filename, "r")
+    while 1:
+        # reading the file
+        line = trade_file.readline()
+        if len(line.split(",")) >= 2:
+            stock = {"name": line.split(",")[0].strip(), "amount": float(line.split(",")[1].strip())}
+            if stock["name"] == name:
+                return stock["amount"]
+        return None
+
+
 def get_quantity_bucket(name, price):
     if is_nifty_50(name):
-        quantity = int(20000 / price)
+        quantity = int(30000 / price)
     else:
-        quantity = int(10000 / price)
+        quantity = int(20000 / price)
     return max(quantity, 1)
 
 
