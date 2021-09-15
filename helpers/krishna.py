@@ -165,4 +165,8 @@ def purchase_percentile(name):
         return -1
 
 
+def get_quantity_bucket_to_sell(name, price, quantity):
+    if price * quantity < 30000*2:
+        return quantity
+    return int (30000/price)
 

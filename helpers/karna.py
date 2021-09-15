@@ -4,8 +4,9 @@ from time import sleep
 
 from kiteconnect import KiteConnect
 
+from helpers import db
 from helpers.krishna import blacklist_sell, blacklist_buy, is_blacklist_sell, is_blacklist_buy, portfolio_amount, \
-    get_stock_amount, today_trading_amount, get_quantity_bucket
+    get_stock_amount, today_trading_amount, get_quantity_bucket, get_quantity_bucket_to_sell
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 directory = os.path.dirname(__file__)
@@ -43,12 +44,13 @@ def execute_sell_order(name, quantity, price):
         order_id = kite.place_order(tradingsymbol= name,
                                     exchange=kite.EXCHANGE_NSE,
                                     transaction_type=kite.TRANSACTION_TYPE_SELL,
-                                    quantity=int(quantity),
+                                    quantity=get_quantity_bucket_to_sell(name, price, quantity),
                                     order_type=kite.ORDER_TYPE_LIMIT,
                                     price=price,
                                     product=kite.PRODUCT_CNC,
                                     variety=kite.VARIETY_REGULAR)
         print("Order placed. ID is: {}".format(order_id))
+        db.put(name + ": sell", str(price))
         sleep(10)
         result = name + "," + str(price) + "," + str(date.today()) + ",Sell\n"
         print(result)

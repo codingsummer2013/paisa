@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
 
+from helpers import db
+
 directory = os.path.dirname(__file__)
 filename = os.path.join(directory, '../data/tradebook-UE9384.csv')
 
@@ -12,13 +14,13 @@ while 1:
     line = tradebook.readline()
     if len(line) == 0:
         break
-
+    # print(line)
     words = line.split(",")
     name = words[0]
     type = words[6]
     time = words[11]
     price = words[8]
-    key = name + "~~" + type
+    key = name + ":" + type
 
     cur_object = dict()
     # 2021-04-05T10:57:28
@@ -35,5 +37,5 @@ while 1:
 
     if overwrite:
         dictionary[key] = cur_object
-
-    print(dictionary)
+        if type == "sell":
+            db.put(key, str(price))

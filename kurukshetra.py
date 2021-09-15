@@ -2,6 +2,7 @@ import time
 
 from kiteconnect import KiteConnect
 
+from helpers import db
 from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock
 from helpers.karna import execute_buy_order, execute_sell_order
@@ -45,6 +46,10 @@ def becho_re():
             if stock['average_price'] == 0:
                 continue
             compared_price = stock['average_price']
+            key = stock['tradingsymbol'] + ": " + "sell"
+            db_price = db.get_price(key)
+            if db_price is not None and compared_price < float(db_price):
+                compared_price = float(db_price)
             change = (100 * (stock['last_price'] - compared_price) / compared_price)
             print("Stock ", stock['tradingsymbol'], " Change", change)
             if stock['day_change_percentage'] > 0.5 and change > 2:
