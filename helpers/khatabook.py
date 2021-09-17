@@ -8,7 +8,7 @@ filename = os.path.join(directory, '../data/tradebook-UE9384.csv')
 
 tradebook = open(filename, "r")
 dictionary = dict()
-
+tradebook.readline() # ignore 1st line
 while 1:
     # reading the file
     line = tradebook.readline()
@@ -20,7 +20,7 @@ while 1:
     type = words[6]
     time = words[11]
     price = words[8]
-    key = name + ":" + type
+    key = name + ": " + type
 
     cur_object = dict()
     # 2021-04-05T10:57:28

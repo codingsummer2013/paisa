@@ -32,8 +32,13 @@ def khareed_arambh(stock):
             if pos['tradingsymbol'] == stock_historical["name"] and pos['average_price'] != 0 and \
                     holding_price > pos['average_price']:
                 holding_price = pos['average_price']
+        for order in kite.orders():
+            if order['status'] != 'REJECTED' and order['status'] != 'CANCELLED' and order['tradingsymbol'] == \
+                    stock and holding_price > order['price'] and \
+                    order['transaction_type'] == 'BUY':
+                holding_price = order['price']
         change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
-        print("Change for ", cur_stock_name, " ", change, " ", cur_price, " & holding", holding_price)
+        print("Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price", holding_price)
         if change < purchase_percentile(stock_historical["name"]) and cur_price < prev_day_closing_price:
             execute_buy_order(stock_historical["name"], cur_price)
     except Exception as e:
@@ -48,21 +53,25 @@ def becho_re():
             compared_price = stock['average_price']
             key = stock['tradingsymbol'] + ": " + "sell"
             db_price = db.get_price(key)
+            percentage = 2
             if db_price is not None and compared_price < float(db_price):
                 compared_price = float(db_price)
+                percentage = 0.5
             change = (100 * (stock['last_price'] - compared_price) / compared_price)
-            print("Stock ", stock['tradingsymbol'], " Change", change)
-            if stock['day_change_percentage'] > 0.5 and change > 2:
+            print("Stock ", stock['tradingsymbol'], " Change", change, "Compared price", compared_price,
+                  " Actual price ", stock['last_price'])
+            if stock['day_change_percentage'] > 0.5 and change > percentage:
                 quantity = stock["quantity"] + stock["t1_quantity"]
                 today_quantity = 0
                 for order in kite.orders():
-                    if (order['status'] != 'REJECTED' and order['status'] != 'CANCELLED') and order['tradingsymbol'] == stock['tradingsymbol']:
+                    if (order['status'] != 'REJECTED' and order['status'] != 'CANCELLED') and order['tradingsymbol'] == \
+                            stock['tradingsymbol']:
                         if order['transaction_type'] == 'SELL':
                             today_quantity = today_quantity - order['quantity']
                         if order['transaction_type'] == 'BUY':
                             today_quantity = today_quantity + order['quantity']
                         quantity = quantity + today_quantity
-                print ("Selling Stock ", stock['tradingsymbol'], " Change", change, quantity)
+                print("Selling Stock ", stock['tradingsymbol'], " Change", change, quantity)
                 execute_sell_order(stock['tradingsymbol'], quantity, selling_price(stock['last_price']))
         except Exception as e:
             print("Exception occurred, Skipping the instance", e, stock)
@@ -72,11 +81,10 @@ def khareedo_re():
     nifty200 = get_nifty_200_list()
     for stock in nifty200:
         khareed_arambh(stock)
-    # khareed_arambh("BANKINDIA")
+    # khareed_arambh("NMDC")
 
 
 while True:
     khareedo_re()
     becho_re()
     time.sleep(60)
-
