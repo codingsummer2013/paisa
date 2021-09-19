@@ -4,9 +4,11 @@ from kiteconnect import KiteConnect
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 
+token_file = open("token.txt", "r")
+
 file = open("request_token.txt", "w")
 
-url = 'http://127.0.0.1:19291/kite-redirect?type=login&status=success&request_token=88dI425RwXrqrBh4vmC83hlQTUWjUbHk&action=login'
+url = token_file.readline()
 parsed_url = urlparse(url)
 captured_value = parse_qs(parsed_url.query)['request_token'][0]
 
