@@ -5,3 +5,4 @@ APLLTD: sell~~~827.25
 BIOCON: sell~~~373.3
 POWERGRID: sell~~~179.7
 CADILAHC: sell~~~576.2
+RBLBANK: sell~~~189.9
