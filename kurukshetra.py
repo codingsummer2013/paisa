@@ -38,7 +38,7 @@ def khareed_arambh(stock):
                     order['transaction_type'] == 'BUY':
                 holding_price = order['price']
         change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
-        print("Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price", holding_price)
+        print("Khareedna Run: Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price", holding_price)
         if change < purchase_percentile(stock_historical["name"]) and cur_price < prev_day_closing_price:
             execute_buy_order(stock_historical["name"], cur_price)
     except Exception as e:
@@ -58,7 +58,7 @@ def becho_re():
                 compared_price = float(db_price)
                 percentage = 0.5
             change = (100 * (stock['last_price'] - compared_price) / compared_price)
-            print("Stock ", stock['tradingsymbol'], " Change", change, "Compared price", compared_price,
+            print("Bechna Run: Stock ", stock['tradingsymbol'], " Change", change, "Compared price", compared_price,
                   " Actual price ", stock['last_price'])
             if stock['day_change_percentage'] > 0.5 and change > percentage:
                 quantity = stock["quantity"] + stock["t1_quantity"]
@@ -85,6 +85,6 @@ def khareedo_re():
 
 
 while True:
-  #  khareedo_re()
+    khareedo_re()
     becho_re()
     time.sleep(60)

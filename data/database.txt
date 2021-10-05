@@ -12,3 +12,5 @@ JINDALSTEL: sell~~~392.8
 DHANI: sell~~~195.75
 MGL: sell~~~1112.9
 BPCL: sell~~~443.4
+JSWSTEEL: sell~~~695.05
+IRCON: sell~~~47.55
