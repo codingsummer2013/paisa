@@ -9,3 +9,6 @@ RBLBANK: sell~~~189.9
 AUBANK: sell~~~1183.7
 CESC: sell~~~90.15
 JINDALSTEL: sell~~~392.8
+DHANI: sell~~~195.75
+MGL: sell~~~1112.9
+BPCL: sell~~~443.4

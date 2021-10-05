@@ -160,9 +160,9 @@ def get_quantity_bucket(name, price):
 
 def purchase_percentile(name):
     if is_nifty_50(name):
-        return -1.5
+        return -0.5
     else:
-        return -2
+        return -1
 
 
 def get_quantity_bucket_to_sell(name, price, quantity):
