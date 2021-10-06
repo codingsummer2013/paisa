@@ -123,9 +123,9 @@ def get_stock_amount(name):
     if custom_amount is not None:
         return custom_amount
     if is_nifty_50(name):
-        return 200000
+        return 250000
     else:
-        return 100000
+        return 150000
 
 
 def today_trading_amount(name):
