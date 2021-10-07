@@ -14,3 +14,7 @@ MGL: sell~~~1112.9
 BPCL: sell~~~443.4
 JSWSTEEL: sell~~~695.05
 IRCON: sell~~~47.55
+CASTROLIND: sell~~~145.6
+ENDURANCE: sell~~~1626.1
+SAIL: sell~~~121.15
+LAURUSLABS: sell~~~635.9
