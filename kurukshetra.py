@@ -85,6 +85,7 @@ def khareedo_re():
 
 
 while True:
+    becho_re()
     khareedo_re()
     becho_re()
     time.sleep(60)
