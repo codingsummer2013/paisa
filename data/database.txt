@@ -27,3 +27,5 @@ CIPLA: sell~~~933.25
 TATASTEEL: sell~~~1344.1
 SBIETFIT: sell~~~373.2
 DALBHARAT: sell~~~2129.05
+UPL: sell~~~757.15
+NMDC: sell~~~153.7
