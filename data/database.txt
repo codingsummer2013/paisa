@@ -31,3 +31,10 @@ UPL: sell~~~757.15
 NMDC: sell~~~153.7
 LUPIN: sell~~~982.7
 BAJAJ-AUTO: sell~~~4019.45
+TATACONSUM: sell~~~842.2
+GODREJCP: sell~~~1055.85
+FORTIS: sell~~~271.55
+BANKINDIA: sell~~~60.85
+TECHM: sell~~~1419.0
+GODREJAGRO: sell~~~646.1
+LALPATHLAB: sell~~~3815.5
