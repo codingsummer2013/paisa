@@ -7,7 +7,7 @@ POWERGRID: sell~~~179.7
 CADILAHC: sell~~~576.2
 RBLBANK: sell~~~189.9
 AUBANK: sell~~~1262.35
-CESC: sell~~~90.15
+CESC: sell~~~96.6
 JINDALSTEL: sell~~~392.8
 DHANI: sell~~~195.75
 MGL: sell~~~1112.9
@@ -38,3 +38,9 @@ BANKINDIA: sell~~~60.85
 TECHM: sell~~~1419.0
 GODREJAGRO: sell~~~646.1
 LALPATHLAB: sell~~~3815.5
+ACC: sell~~~2305.85
+AMBUJACEM: sell~~~413.6
+ULTRACEMCO: sell~~~7502.45
+IPCALAB: sell~~~2417.95
+SANOFI: sell~~~8236.55
+HDFCAMC: sell~~~2991.25
