@@ -2,7 +2,7 @@ import time
 
 from kiteconnect import KiteConnect
 
-from helpers import db
+from helpers import db, khatabook, config_reader
 from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock
 from helpers.karna import execute_buy_order, execute_sell_order
@@ -39,8 +39,24 @@ def khareed_arambh(stock):
                 holding_price = order['price']
         change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
         print("Khareedna Run: Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price", holding_price)
-        if change < purchase_percentile(stock_historical["name"]) and cur_price < prev_day_closing_price:
-            execute_buy_order(stock_historical["name"], cur_price)
+
+        percentage = purchase_percentile(stock_historical["name"])
+        if change < percentage and stock['day_change_percentage'] < -1 * float(config_reader.get("BUY_DAY_CHANGE_PERCENTILE")):
+
+            # apply khud ki khatabook checks
+            self_khata_details = khatabook.get_details(stock['tradingsymbol'])
+            if 'buy' in self_khata_details:
+                if config_reader.get("BUY") == "MINIMUM":
+                    db_price = self_khata_details['buy']['minimum']
+                if config_reader.get("BUY") == "AVERAGE":
+                    db_price = self_khata_details['buy']['average']
+                if db_price is not None and holding_price > float(db_price):
+                    holding_price = float(db_price)
+                    percentage = 0.2
+            change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
+
+            if change < percentage:
+                execute_buy_order(stock_historical["name"], cur_price)
     except Exception as e:
         print("Exception occurred, Skipping the instance", e, stock)
 
@@ -51,16 +67,28 @@ def becho_re():
             if stock['average_price'] == 0:
                 continue
             compared_price = stock['average_price']
-            key = stock['tradingsymbol'] + ": " + "sell"
-            db_price = db.get_price(key)
-            percentage = 2
-            if db_price is not None and compared_price < float(db_price):
-                compared_price = float(db_price)
-                percentage = 0.5
+            percentage = float(config_reader.get("SELL_PROFIT_PERCENTAGE"))
+            change = (100 * (stock['last_price'] - compared_price) / compared_price)
+
+            # BUY price check
+            if change < percentage:
+                continue
+
+            # apply khud ki khatabook checks
+            self_khata_details = khatabook.get_details(stock['tradingsymbol'])
+            if 'sell' in self_khata_details:
+                if config_reader.get("SELL") == "MAXIMUM":
+                    db_price = self_khata_details['sell']['maximum']
+                if config_reader.get("SELL") == "AVERAGE":
+                    db_price = self_khata_details['sell']['average']
+                if db_price is not None and compared_price < float(db_price):
+                    compared_price = float(db_price)
+                    percentage = 0.2
+
             change = (100 * (stock['last_price'] - compared_price) / compared_price)
             print("Bechna Run: Stock ", stock['tradingsymbol'], " Change", change, "Compared price", compared_price,
                   " Actual price ", stock['last_price'])
-            if stock['day_change_percentage'] > 0.5 and change > percentage:
+            if stock['day_change_percentage'] > float(config_reader.get("SELL_DAY_CHANGE_PERCENTILE")) and change > percentage:
                 quantity = stock["quantity"] + stock["t1_quantity"]
                 today_quantity = 0
                 for order in kite.orders():
