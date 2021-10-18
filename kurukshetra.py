@@ -23,7 +23,8 @@ def khareed_arambh(stock):
             print("Historical information is Not available, Skipping", stock)
             return
         cur_price = kite.quote(cur_stock_name)[cur_stock_name]['last_price']
-        prev_day_closing_price = kite.ohlc(cur_stock_name)[cur_stock_name]['ohlc']['close']
+        # prev_day_closing_price = kite.ohlc(cur_stock_name)[cur_stock_name]['ohlc']['close']
+
         holding_price = stock_historical["price"]
         for holding in holdings:
             if holding['tradingsymbol'] == stock and holding_price > holding['average_price']:
