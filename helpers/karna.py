@@ -50,7 +50,7 @@ def execute_sell_order(name, quantity, price):
                                     product=kite.PRODUCT_CNC,
                                     variety=kite.VARIETY_REGULAR)
         print("Order placed. ID is: {}".format(order_id))
-        db.put(name + ": sell", str(price))
+        # db.put(name + ": sell", str(price))
         sleep(10)
         result = name + "," + str(price) + "," + str(date.today()) + ",Sell\n"
         print(result)
