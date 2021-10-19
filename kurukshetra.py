@@ -107,9 +107,9 @@ def becho_re():
                     if order['status'] != 'REJECTED' and order['status'] != 'CANCELLED' and order['tradingsymbol'] == \
                             stock['tradingsymbol'] and price_to_sell < order['price'] and \
                             order['transaction_type'] == 'SELL':
-                        price_to_sell = order['price']
+                        price_to_sell = max(price_to_sell, order['price'])
                 print("Selling Stock ", stock['tradingsymbol'], " Change", change, quantity)
-                execute_sell_order(stock['tradingsymbol'], quantity, price_to_sell)
+                execute_sell_order(stock['tradingsymbol'], quantity, selling_price(price_to_sell))
         except Exception as e:
             print("Exception occurred, Skipping the instance", e, stock)
 
