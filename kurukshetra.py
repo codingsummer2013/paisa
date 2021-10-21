@@ -26,12 +26,18 @@ def khareed_arambh(stock):
         cur_price = kite.quote(cur_stock_name)[cur_stock_name]['last_price']
         prev_day_closing_price = kite.ohlc(cur_stock_name)[cur_stock_name]['ohlc']['close']
 
-        holding_price = stock_historical["price"]
+        historical_price = 999999
+        if config_reader.get("HISTORICAL")  == "MINIMUM":
+            historical_price = stock_historical['price']['minimum']
+        if config_reader.get("HISTORICAL")  == "AVERAGE":
+            historical_price = stock_historical['price']['average']
+
+        holding_price = historical_price
         for holding in holdings:
             if holding['tradingsymbol'] == stock and holding_price > holding['average_price']:
                 holding_price = holding['average_price']
         for pos in kite.positions()['day']:
-            if pos['tradingsymbol'] == stock_historical["name"] and pos['average_price'] != 0 and \
+            if pos['tradingsymbol'] == str(stock) and pos['average_price'] != 0 and \
                     holding_price > pos['average_price']:
                 holding_price = pos['average_price']
         for order in kite.orders():
@@ -42,7 +48,7 @@ def khareed_arambh(stock):
         change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
         print("Khareedna Run: Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price", holding_price)
 
-        percentage = purchase_percentile(stock_historical["name"])
+        percentage = purchase_percentile(str(stock))
         if change < percentage and cur_price < prev_day_closing_price:
 
             # apply khud ki khatabook checks
@@ -58,7 +64,7 @@ def khareed_arambh(stock):
             change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
 
             if change < percentage:
-                execute_buy_order(stock_historical["name"], cur_price)
+                execute_buy_order(str(stock), cur_price)
     except Exception as e:
         print("Exception occurred, Skipping the instance", e, stock)
 
@@ -122,7 +128,7 @@ def khareedo_re():
 
 
 while True:
-    becho_re()
+    # becho_re()
     khareedo_re()
     becho_re()
     time.sleep(60)
