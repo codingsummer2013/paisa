@@ -2,6 +2,8 @@ import os
 
 from kiteconnect import KiteConnect
 
+from helpers import config_reader
+
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 directory = os.path.dirname(__file__)
 filename = os.path.join(directory, 'request_token.txt')
@@ -152,21 +154,21 @@ def get_custom_trade_limit(name):
 
 def get_quantity_bucket(name, price):
     if is_nifty_50(name):
-        quantity = int(30000 / price)
+        quantity = int(int(config_reader.get("NIFTY_50_BUCKET")) / price)
     else:
-        quantity = int(20000 / price)
+        quantity = int(int(config_reader.get("NIFTY_200_BUCKET")) / price)
     return max(quantity, 1)
 
 
 def purchase_percentile(name):
     if is_nifty_50(name):
-        return -0.5
+        return -1.0 * float(config_reader.get("NIFTY_50_BUY"))
     else:
-        return -1
+        return -1.0 * float(config_reader.get("NIFTY_200_BUY"))
 
 
 def get_quantity_bucket_to_sell(name, price, quantity):
-    if price * quantity < 30000*2:
+    if price * quantity < int(config_reader.get("SELL_BUCKET")) *2:
         return quantity
-    return int (30000/price)
+    return int (int(config_reader.get("SELL_BUCKET"))/price)
 
