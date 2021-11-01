@@ -4,7 +4,7 @@ from time import sleep
 
 from kiteconnect import KiteConnect
 
-from helpers import db
+from helpers import db, config_reader
 from helpers.krishna import blacklist_sell, blacklist_buy, is_blacklist_sell, is_blacklist_buy, portfolio_amount, \
     get_stock_amount, today_trading_amount, get_quantity_bucket, get_quantity_bucket_to_sell
 
@@ -23,6 +23,11 @@ def execute_buy_order(name, price):
     if portfolio_amount(name) + today_trading_amount(name) > stock_max_amout:
         print("Quantity exceeds trade amount, rejecting ", name)
         return
+
+    if config_reader.get("BUY_PRICE") == "DAY_MINIMUM":
+        day_low_price = kite.quote("NSE:"+name)["NSE:"+name]['ohlc']['low']
+        if price > day_low_price:
+            price = day_low_price
 
     order_id = kite.place_order(tradingsymbol= name,
                                 exchange=kite.EXCHANGE_NSE,

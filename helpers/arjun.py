@@ -8,11 +8,14 @@ from helpers import config_reader
 from helpers.Shakuntala import get_percentage_diff
 
 historical_data = []
+historical_row_data = []
 
 
 def read_historical_data():
     global historical_data
     historical_data = []
+    global historical_row_data
+    historical_row_data = []
     directory = os.path.dirname(__file__)
     filename = os.path.join(directory, '../data/historical_data.txt')
     historical_file = open(filename, "r")
@@ -27,7 +30,9 @@ def read_historical_data():
             sum = 0
             minimum = 999999
             maximum = 0
+            historical_row_item = []
             for info in info_list:
+                historical_row_item.append(info)
                 if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < int(
                         (config_reader.get("HISTORICAL_LIMIT"))):
                     count += 1
@@ -40,6 +45,8 @@ def read_historical_data():
                 stock_historical_info["minimum"] = minimum
                 stock_historical_info["maximum"] = maximum
             stock = {"name": line.split("~~~")[0].strip(), "price": stock_historical_info}
+        historical_row_stock_detail = {"name": line.split("~~~")[0].strip(), "price": historical_row_item}
+        historical_row_data.append(historical_row_stock_detail)
         historical_data.append(stock)
 
 
@@ -91,3 +98,10 @@ def get_historical_stock(stockname):
         if item["name"] == stockname:
             return item
     return None
+
+
+def put_historical_data_from_quote_api(stockname, date, price):
+    for stock in historical_row_data:
+        if stockname == stock["name"]:
+            for record in stock["price"]:
+                print(record)
