@@ -1,14 +1,21 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, date
 
 import requests
+from kiteconnect import KiteConnect
 
 from helpers import config_reader
 from helpers.Shakuntala import get_percentage_diff
 
 historical_data = []
 historical_row_data = []
+
+kite = KiteConnect(api_key="tf77pivddr8pmyin")
+directory = os.path.dirname(__file__)
+filename = os.path.join(directory, 'request_token.txt')
+token = open(filename, "r")
+kite.set_access_token(token.readline())
 
 
 def read_historical_data():
@@ -100,8 +107,27 @@ def get_historical_stock(stockname):
     return None
 
 
-def put_historical_data_from_quote_api(stockname, date, price):
+def update_historical_file():
+    directory = os.path.dirname(__file__)
+    filename = os.path.join(directory, '../data/historical_data.txt')
+    historical_file = open(filename, "w")
     for stock in historical_row_data:
-        if stockname == stock["name"]:
+        historical_file.write(stock["name"] + "~~~" + json.dumps(stock["price"]) + "\n")
+
+
+def ohlc_and_put(stockname):
+    output = kite.ohlc(stockname)
+    date_string = date.today().strftime("%Y-%m-%d")
+    for stock in historical_row_data:
+        if stockname == "NSE:" + stock["name"]:
+            data_exists = False
             for record in stock["price"]:
-                print(record)
+                if record['time'] == date_string:
+                    data_exists = True
+            if not data_exists:
+                cur_object = dict()
+                cur_object["time"] = date_string
+                cur_object["price"] = output[stockname]['ohlc']['close']
+                stock["price"].append(cur_object)
+                update_historical_file()
+    return output

@@ -1,11 +1,12 @@
 import time
-from datetime import datetime
+from datetime import datetime, date
 
 from kiteconnect import KiteConnect
 
 from helpers import db, khatabook, config_reader
 from helpers.Shakuntala import selling_price
-from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock
+from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock, \
+    ohlc_and_put
 from helpers.karna import execute_buy_order, execute_sell_order
 from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list, purchase_percentile
 
@@ -24,8 +25,7 @@ def khareed_arambh(stock):
             print("Historical information is Not available, Skipping", stock)
             return
         cur_price = kite.quote(cur_stock_name)[cur_stock_name]['last_price']
-        prev_day_closing_price = kite.ohlc(cur_stock_name)[cur_stock_name]['ohlc']['close']
-
+        prev_day_closing_price = ohlc_and_put(cur_stock_name)[cur_stock_name]['ohlc']['close']
         historical_price = 999999
         if config_reader.get("HISTORICAL")  == "MINIMUM":
             historical_price = stock_historical['price']['minimum']

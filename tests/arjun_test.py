@@ -1,5 +1,7 @@
-from helpers.arjun import read_historical_data, put_historical_data_from_quote_api
+from datetime import datetime, date
+
+from helpers.arjun import read_historical_data, ohlc_and_put
 
 read_historical_data()
 
-put_historical_data_from_quote_api("RELIANCE", "23-04-2010", 123)
+print(ohlc_and_put("NSE:RELIANCE"))
