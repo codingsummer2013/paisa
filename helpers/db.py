@@ -23,7 +23,7 @@ def read_db():
             break
         if len(line.split("~~~")) >= 2:
             key = line.split("~~~")[0].strip()
-            value = line.split("~~~")[1].strip()
+            value = json.loads(line.split("~~~")[1].strip())
             db_dict[key] = value
     db_file.close()
 
