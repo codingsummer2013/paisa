@@ -7,12 +7,15 @@ from helpers import db, khatabook, config_reader
 from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock, \
     ohlc_and_put
+from helpers.db import log_todays_entries
 from helpers.karna import execute_buy_order, execute_sell_order
 from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list, purchase_percentile
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 token = open("helpers/request_token.txt", "r")
 kite.set_access_token(token.readline())
+
+skipped_market_check = False
 
 
 def khareed_arambh(stock):
@@ -127,8 +130,19 @@ def khareedo_re():
     # khareed_arambh("SRF")
 
 
+def market_closed():
+    now = datetime.now()
+    four_pm = now.replace(hour=15, minute=45, second=0, microsecond=0)
+    return now > four_pm
+
+
 while True:
-    # becho_re()
-    khareedo_re()
-    becho_re()
-    time.sleep(60)
+    if (not market_closed()) or skipped_market_check:
+        # becho_re()
+        khareedo_re()
+        becho_re()
+        time.sleep(60)
+    else:
+        log_todays_entries()
+        print("Done for the day")
+        time.sleep(60000)
