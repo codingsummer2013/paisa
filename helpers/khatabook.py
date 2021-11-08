@@ -50,7 +50,7 @@ def get_details(stock_name):
     sell_data = db.get(stock_name + ": sell")
     stock_info = dict()
     if buy_data != "NA":
-        info_list = json.loads(buy_data)
+        info_list = buy_data
         count=0
         sum=0
         minimum=999999
@@ -68,7 +68,7 @@ def get_details(stock_name):
             buy_info["maximum"] = maximum
             stock_info["buy"] = buy_info
     if sell_data != "NA":
-        info_list = json.loads(sell_data)
+        info_list = sell_data
         count=0
         sum=0
         minimum=999999
