@@ -127,7 +127,7 @@ def khareedo_re():
     nifty200 = get_nifty_200_list()
     for stock in nifty200:
         khareed_arambh(stock)
-    # khareed_arambh("SRF")
+    # khareed_arambh("HCLTECH")
 
 
 def market_closed():
