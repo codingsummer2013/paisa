@@ -55,6 +55,7 @@ def khareed_arambh(stock):
         if change < percentage and cur_price < prev_day_closing_price:
 
             # apply khud ki khatabook checks
+            db_price = holding_price
             self_khata_details = khatabook.get_details(stock)
             if 'buy' in self_khata_details:
                 if config_reader.get("BUY") == "MINIMUM":
