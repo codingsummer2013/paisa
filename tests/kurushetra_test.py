@@ -7,4 +7,4 @@ from datetime import datetime
 # print(datetime.now().replace(hour=8, minute=0, second=0, microsecond=0) < datetime.now().time())
 from helpers.Shakuntala import selling_price
 
-print(selling_price(123.213))
+print(selling_price(1454.51))

@@ -8,6 +8,6 @@ def get_percentage_diff(previous, current):
 
 def selling_price(price):
     price = int(price * 1005)
-    while price % 5 != 0:
+    while price % 50 != 0:
         price += 1
     return float(float(price) / float(1000))
