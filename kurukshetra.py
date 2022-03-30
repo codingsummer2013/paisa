@@ -125,7 +125,7 @@ def becho_re():
 
 
 def khareedo_re():
-    nifty200 = get_nifty_200_list()
+    nifty200 = get_nifty_50_list()
     for stock in nifty200:
         khareed_arambh(stock)
     # khareed_arambh("HCLTECH")
