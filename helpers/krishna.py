@@ -162,13 +162,12 @@ def get_quantity_bucket(name, price):
 
 
 def purchase_percentile(name, comparing_with):
-    if comparing_with == "HISTORICAL":
+    if comparing_with == "HISTORICAL" or not applying_auto_values():
         if is_nifty_50(name):
             return -1.0 * float(config_reader.get("NIFTY_50_BUY"))
         else:
             return -1.0 * float(config_reader.get("NIFTY_200_BUY"))
     else:
-        print("Applying last purchase diff")
         return -1.0 * float(config_reader.get("LAST_PURCHASE_DIFF"))
 
 
