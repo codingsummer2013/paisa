@@ -162,7 +162,7 @@ def get_quantity_bucket(name, price):
 
 
 def purchase_percentile(name, comparing_with):
-    if comparing_with == "HISTORICAL" or not applying_auto_values():
+    if comparing_with == "HISTORICAL" and not applying_auto_values():
         if is_nifty_50(name):
             return -1.0 * float(config_reader.get("NIFTY_50_BUY"))
         else:
