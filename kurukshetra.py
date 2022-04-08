@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from kiteconnect import KiteConnect
 
@@ -9,7 +9,8 @@ from helpers.arjun import read_historical_data, is_historical_data_exists, get_h
     ohlc_and_put
 from helpers.db import log_todays_entries
 from helpers.karna import execute_buy_order, execute_sell_order
-from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list, purchase_percentile
+from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list, purchase_percentile, \
+    get_historical_price_to_compare
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 token = open("helpers/request_token.txt", "r")
@@ -30,28 +31,34 @@ def khareed_arambh(stock):
         cur_price = kite.quote(cur_stock_name)[cur_stock_name]['last_price']
         prev_day_closing_price = ohlc_and_put(cur_stock_name)[cur_stock_name]['ohlc']['close']
         historical_price = 999999
-        if config_reader.get("HISTORICAL")  == "MINIMUM":
-            historical_price = stock_historical['price']['minimum']
-        if config_reader.get("HISTORICAL")  == "AVERAGE":
-            historical_price = stock_historical['price']['average']
+        historical_price = get_historical_price_to_compare(historical_price, stock_historical)
 
         holding_price = historical_price
+        comparing_with = "HISTORICAL"
         for holding in holdings:
-            if holding['tradingsymbol'] == stock and holding_price > holding['average_price']:
-                holding_price = holding['average_price']
+            if holding['tradingsymbol'] == stock:
+                comparing_with = "HOLDING"
+                if holding_price > holding['average_price']:
+                    holding_price = holding['average_price']
         for pos in kite.positions()['day']:
-            if pos['tradingsymbol'] == str(stock) and pos['average_price'] != 0 and \
-                    holding_price > pos['average_price']:
-                holding_price = pos['average_price']
+            if pos['tradingsymbol'] == str(stock) and pos['average_price'] != 0:
+                comparing_with = "DAY"
+                if holding_price > pos['average_price']:
+                    holding_price = pos['average_price']
+
         for order in kite.orders():
             if order['status'] != 'REJECTED' and order['status'] != 'CANCELLED' and order['tradingsymbol'] == \
-                    stock and holding_price > order['price'] and \
+                    stock and \
                     order['transaction_type'] == 'BUY':
-                holding_price = order['price']
+                comparing_with = "ORDER"
+                if holding_price > order['price']:
+                    holding_price = order['price']
         change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
-        print("Khareedna Run: Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price", holding_price)
 
-        percentage = purchase_percentile(str(stock))
+        percentage = purchase_percentile(str(stock), comparing_with)
+        print("Khareedna Run: Change for ", cur_stock_name, " ", change, " ", cur_price, "Compared price",
+              holding_price, "Compared percentage", percentage, "Comparing with", comparing_with)
+
         if change < percentage and cur_price < prev_day_closing_price:
 
             # apply khud ki khatabook checks
@@ -86,6 +93,7 @@ def becho_re():
             if change < percentage:
                 continue
 
+            """ Disabling khatabook checks for now
             # apply khud ki khatabook checks
             self_khata_details = khatabook.get_details(stock['tradingsymbol'])
             if 'sell' in self_khata_details:
@@ -96,6 +104,7 @@ def becho_re():
                 if db_price is not None and compared_price < float(db_price):
                     compared_price = float(db_price)
                     percentage = 0.2
+            """
 
             change = (100 * (stock['last_price'] - compared_price) / compared_price)
             print("Bechna Run: Stock ", stock['tradingsymbol'], " Change", change, "Compared price", compared_price,
@@ -132,7 +141,7 @@ def khareedo_re():
 
 
 def market_closed():
-    now = datetime.now()
+    now = datetime.utcnow() + timedelta(hours=5, minutes=30) # time in indian timezone
     four_pm = now.replace(hour=15, minute=45, second=0, microsecond=0)
     return now > four_pm
 

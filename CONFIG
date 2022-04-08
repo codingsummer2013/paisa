@@ -19,3 +19,7 @@ NIFTY_200_BUCKET:10000
 SELL_BUCKET:20000
 ### DAY_MINIMUM, NA
 BUY_PRICE:DAY_MINIMUM
+### AUTO switches from minimum to average after 1 pm and uses min buying price, OFF - doesn't do anything
+RUNNING_MODE:AUTO
+### By default 1% diff we are averaging it out
+LAST_PURCHASE_DIFF:1

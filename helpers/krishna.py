@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 
 from kiteconnect import KiteConnect
 
@@ -160,11 +161,15 @@ def get_quantity_bucket(name, price):
     return max(quantity, 1)
 
 
-def purchase_percentile(name):
-    if is_nifty_50(name):
-        return -1.0 * float(config_reader.get("NIFTY_50_BUY"))
+def purchase_percentile(name, comparing_with):
+    if comparing_with == "HISTORICAL":
+        if is_nifty_50(name):
+            return -1.0 * float(config_reader.get("NIFTY_50_BUY"))
+        else:
+            return -1.0 * float(config_reader.get("NIFTY_200_BUY"))
     else:
-        return -1.0 * float(config_reader.get("NIFTY_200_BUY"))
+        print("Applying last purchase diff")
+        return -1.0 * float(config_reader.get("LAST_PURCHASE_DIFF"))
 
 
 def get_quantity_bucket_to_sell(name, price, quantity):
@@ -172,3 +177,36 @@ def get_quantity_bucket_to_sell(name, price, quantity):
         return quantity
     return int (int(config_reader.get("SELL_BUCKET"))/price)
 
+
+def get_historical_price_to_compare(historical_price, stock_historical):
+    if config_reader.get("RUNNING_MODE") == "AUTO":
+        if market_mid_day():
+            # print("Running in auto mode with average price" + datetime.utcnow() + timedelta(hours=5, minutes=30))
+            historical_price = stock_historical['price']['average']
+            return historical_price
+        else:
+            # print("Running in auto mode with minimum price")
+            historical_price = stock_historical['price']['minimum']
+            return historical_price
+    if config_reader.get("HISTORICAL") == "MINIMUM":
+        historical_price = stock_historical['price']['minimum']
+    if config_reader.get("HISTORICAL") == "AVERAGE":
+        historical_price = stock_historical['price']['average']
+    return historical_price
+
+
+def market_mid_day():
+    now = datetime.utcnow() + timedelta(hours=5, minutes=30) # time in indian timezone
+    twelve_thiry = now.replace(hour=12, minute=30, second=0, microsecond=0)
+    return now > twelve_thiry
+
+
+def applying_auto_values():
+    if config_reader.get("RUNNING_MODE") == "AUTO":
+        if market_mid_day():
+            print("Running in auto mode with Override values", (datetime.utcnow() + timedelta(hours=5, minutes=30)))
+            return True
+        else:
+            print("Running in auto mode with Default values", (datetime.utcnow() + timedelta(hours=5, minutes=30)))
+            return False
+    return False

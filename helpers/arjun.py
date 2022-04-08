@@ -7,6 +7,7 @@ from kiteconnect import KiteConnect
 
 from helpers import config_reader
 from helpers.Shakuntala import get_percentage_diff
+from helpers.krishna import applying_auto_values
 
 historical_data = []
 historical_row_data = []
@@ -26,6 +27,11 @@ def read_historical_data():
     directory = os.path.dirname(__file__)
     filename = os.path.join(directory, '../data/historical_data.txt')
     historical_file = open(filename, "r")
+    if applying_auto_values():
+        limit = 60
+    else:
+        limit = int(
+            (config_reader.get("HISTORICAL_LIMIT")))
     while 1:
         # reading the file
         line = historical_file.readline()
@@ -40,8 +46,7 @@ def read_historical_data():
             historical_row_item = []
             for info in info_list:
                 historical_row_item.append(info)
-                if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < int(
-                        (config_reader.get("HISTORICAL_LIMIT"))):
+                if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < limit:
                     count += 1
                     sum += float(info['price'])
                     minimum = min(minimum, float(info['price']))
