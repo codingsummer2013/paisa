@@ -23,3 +23,5 @@ BUY_PRICE:DAY_MINIMUM
 RUNNING_MODE:AUTO
 ### By default 1% diff we are averaging it out
 LAST_PURCHASE_DIFF:1
+### Auto changes to monthly average and then checking 2% down from that
+AUTO_VALUE_DIFF:2
