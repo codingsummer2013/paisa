@@ -154,6 +154,9 @@ def get_custom_trade_limit(name):
 
 
 def get_quantity_bucket(name, price):
+    if applying_auto_values():
+        quantity = int(int(config_reader.get("AUTO_BUY_BUCKET")) / price)
+        return max(quantity, 1)
     if is_nifty_50(name):
         quantity = int(int(config_reader.get("NIFTY_50_BUCKET")) / price)
     else:
@@ -168,6 +171,8 @@ def purchase_percentile(name, comparing_with):
         else:
             return -1.0 * float(config_reader.get("NIFTY_200_BUY"))
     else:
+        if applying_auto_values():
+            return -1.0 * float(config_reader.get("AUTO_VALUE_DIFF"))
         return -1.0 * float(config_reader.get("LAST_PURCHASE_DIFF"))
 
 
