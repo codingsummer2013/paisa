@@ -16,7 +16,7 @@ nifty50 = []
 nifty200 = []
 blacklist_sell = []
 blacklist_buy = []
-
+count=0
 
 def read_nifty_50():
     global nifty50
@@ -206,11 +206,14 @@ def market_mid_day():
 
 
 def applying_auto_values():
+    count_local = (count + 1) % 2
     if config_reader.get("RUNNING_MODE") == "AUTO":
         if market_mid_day():
-            print("Running in auto mode with Override values", (datetime.utcnow() + timedelta(hours=5, minutes=30)))
+            if count_local % 2 == 0:
+                print("Running in auto mode with Override values", (datetime.utcnow() + timedelta(hours=5, minutes=30)))
             return True
         else:
-            print("Running in auto mode with Default values", (datetime.utcnow() + timedelta(hours=5, minutes=30)))
+            if count_local % 2 == 0:
+                print("Running in auto mode with Default values", (datetime.utcnow() + timedelta(hours=5, minutes=30)))
             return False
     return False
