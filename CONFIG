@@ -8,7 +8,7 @@ SELL_PROFIT_PERCENTAGE:1.5
 SELL_DAY_CHANGE_PERCENTILE:0.3
 BUY_DAY_CHANGE_PERCENTILE:1.0
 ### Historical limit in days
-HISTORICAL_LIMIT:30
+HISTORICAL_LIMIT:90
 ### MINIMUM, AVERAGE, NONE, SELL_MINIMUM
 HISTORICAL:MINIMUM
 ###0.5, 1
@@ -20,7 +20,7 @@ SELL_BUCKET:20000
 ### DAY_MINIMUM, NA
 BUY_PRICE:DAY_MINIMUM
 ### AUTO switches from minimum to average after 1 pm and uses min buying price, OFF - doesn't do anything
-RUNNING_MODE:AUTO
+RUNNING_MODE:OFF
 ### By default 1% diff we are averaging it out
 LAST_PURCHASE_DIFF:1
 ### Auto changes to monthly average and then checking 2% down from that
