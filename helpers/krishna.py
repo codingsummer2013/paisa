@@ -201,7 +201,7 @@ def get_historical_price_to_compare(historical_price, stock_historical):
 
 def market_mid_day():
     now = datetime.utcnow() + timedelta(hours=5, minutes=30) # time in indian timezone
-    twelve_thiry = now.replace(hour=12, minute=30, second=0, microsecond=0)
+    twelve_thiry = now.replace(hour=12, minute=0, second=0, microsecond=0)
     return now > twelve_thiry
 
 

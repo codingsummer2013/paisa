@@ -56,6 +56,8 @@ def read_historical_data():
                 stock_historical_info["average"] = sum / count
                 stock_historical_info["minimum"] = minimum
                 stock_historical_info["maximum"] = maximum
+            else:
+                return None
             stock = {"name": line.split("~~~")[0].strip(), "price": stock_historical_info}
         historical_row_stock_detail = {"name": line.split("~~~")[0].strip(), "price": historical_row_item}
         historical_row_data.append(historical_row_stock_detail)

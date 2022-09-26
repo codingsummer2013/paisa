@@ -12,17 +12,17 @@ HISTORICAL_LIMIT:60
 ### MINIMUM, AVERAGE, NONE, SELL_MINIMUM
 HISTORICAL:MINIMUM
 ###0.5, 1
-NIFTY_50_BUY:1
-NIFTY_200_BUY:2
+NIFTY_50_BUY:4
+NIFTY_200_BUY:4
 NIFTY_50_BUCKET:10000
 NIFTY_200_BUCKET:10000
 SELL_BUCKET:20000
 ### DAY_MINIMUM, NA
 BUY_PRICE:DAY_MINIMUM
 ### AUTO switches from minimum to average after 1 pm and uses min buying price, OFF - doesn't do anything
-RUNNING_MODE:OFF
+RUNNING_MODE:AUTO
 ### By default 1% diff we are averaging it out
-LAST_PURCHASE_DIFF:1
+LAST_PURCHASE_DIFF:4
 ### Auto changes to monthly average and then checking 2% down from that
-AUTO_VALUE_DIFF:5
+AUTO_VALUE_DIFF:2
 AUTO_BUY_BUCKET:10000

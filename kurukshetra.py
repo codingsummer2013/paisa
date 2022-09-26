@@ -21,20 +21,21 @@ skipped_market_check = False
 
 def khareed_arambh(stock):
     try:
-        is_historical_data_exists(stock, True)
+        is_historical_data_exists(stock, False)
         holdings = kite.holdings()
         cur_stock_name = "NSE:" + str(stock)
-        stock_historical = get_historical_stock(stock)
-        if stock_historical is None:
-            print("Historical information is Not available, Skipping", stock)
-            return
+        # Switching off historical logic
+        # stock_historical = get_historical_stock(stock)
+        # if stock_historical is None:
+        #     print("Historical information is Not available, Skipping", stock)
+        #     return
         cur_price = kite.quote(cur_stock_name)[cur_stock_name]['last_price']
         prev_day_closing_price = ohlc_and_put(cur_stock_name)[cur_stock_name]['ohlc']['close']
-        historical_price = 999999
-        historical_price = get_historical_price_to_compare(historical_price, stock_historical)
+        # historical_price = 999999
+        # historical_price = get_historical_price_to_compare(historical_price, stock_historical)
 
-        holding_price = historical_price
-        comparing_with = "HISTORICAL"
+        holding_price = prev_day_closing_price
+        comparing_with = "Previous day"
         for holding in holdings:
             if holding['tradingsymbol'] == stock:
                 comparing_with = "HOLDING"
@@ -134,7 +135,7 @@ def becho_re():
 
 
 def khareedo_re():
-    nifty200 = get_nifty_200_list()
+    nifty200 = get_nifty_50_list()
     for stock in nifty200:
         khareed_arambh(stock)
     # khareed_arambh("HCLTECH")
@@ -148,9 +149,9 @@ def market_closed():
 
 while True:
     if (not market_closed()) or skipped_market_check:
-        becho_re()
+        # becho_re()
         khareedo_re()
-        becho_re()
+        # becho_re()
         time.sleep(60)
     else:
         log_todays_entries()
