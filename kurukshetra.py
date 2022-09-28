@@ -149,7 +149,7 @@ def market_closed():
 
 while True:
     if (not market_closed()) or skipped_market_check:
-        # becho_re()
+        becho_re()
         khareedo_re()
         # becho_re()
         time.sleep(60)
