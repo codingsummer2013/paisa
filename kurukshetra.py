@@ -25,7 +25,7 @@ def khareed_arambh(stock):
         holdings = kite.holdings()
         cur_stock_name = "NSE:" + str(stock)
         # Switching off historical logic
-        # stock_historical = get_historical_stock(stock)
+        stock_historical = get_historical_stock(stock)
         # if stock_historical is None:
         #     print("Historical information is Not available, Skipping", stock)
         #     return
