@@ -35,6 +35,6 @@ def khareedo_kachua():
             sip_data = cachedb.get(stock + ": sip : One%")
             if sip_data == "NA":
                 price = kite.ohlc("NSE:" + stock)["NSE:" + stock]['ohlc']['low']
-                price_to_buy = int(price * 0.9)
+                price_to_buy = int(price * 0.99)
                 karna.execute_buy_order(stock, price_to_buy, 5000)
                 cachedb.put(stock + ": sip : One%", str(price_to_buy))

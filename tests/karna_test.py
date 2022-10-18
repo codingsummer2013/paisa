@@ -1,3 +1,3 @@
-from helpers.karna import execute_buy_order
+from helpers.karna import execute_buy_order_with_minimum_config
 
-execute_buy_order("RELIANCE", 3000)
+execute_buy_order_with_minimum_config("RELIANCE", 3000)

@@ -42,19 +42,22 @@ def execute_buy_order_with_minimum_config(name, price):
 
 
 def execute_buy_order(name, price, amount):
-    if is_blacklist_buy(name):
-        print("Blacklisted to buy", name)
-        return
-    order_id = kite.place_order(tradingsymbol= name,
-                                exchange=kite.EXCHANGE_NSE,
-                                transaction_type=kite.TRANSACTION_TYPE_BUY,
-                                quantity=int(int(amount) / price),
-                                order_type=kite.ORDER_TYPE_LIMIT,
-                                price=price,
-                                product=kite.PRODUCT_CNC,
-                                variety=kite.VARIETY_REGULAR)
-    print("Order placed. ID is: ", order_id)
-    sleep(10)
+    try:
+        if is_blacklist_buy(name):
+            print("Blacklisted to buy", name)
+            return
+        order_id = kite.place_order(tradingsymbol= name,
+                                    exchange=kite.EXCHANGE_NSE,
+                                    transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                    quantity=int(int(amount) / price),
+                                    order_type=kite.ORDER_TYPE_LIMIT,
+                                    price=price,
+                                    product=kite.PRODUCT_CNC,
+                                    variety=kite.VARIETY_REGULAR)
+        print("Order placed. ID is: ", order_id)
+        sleep(10)
+    except :
+        print("Exception in executing order")
 
 
 def execute_sell_order(name, quantity, price):

@@ -8,7 +8,8 @@ from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock, \
     ohlc_and_put
 from helpers.db import log_todays_entries
-from helpers.karna import execute_buy_order, execute_sell_order
+from helpers.kachua import khareedo_kachua
+from helpers.karna import execute_buy_order_with_minimum_config, execute_sell_order
 from helpers.krishna import get_nifty_50_list, is_nifty_50, get_nifty_200_list, purchase_percentile, \
     get_historical_price_to_compare
 
@@ -76,7 +77,7 @@ def khareed_arambh(stock):
             change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
 
             if change < percentage:
-                execute_buy_order(str(stock), cur_price)
+                execute_buy_order_with_minimum_config(str(stock), cur_price)
     except Exception as e:
         print("Exception occurred, Skipping the instance", e, stock)
 
@@ -149,6 +150,7 @@ def market_closed():
 
 while True:
     if (not market_closed()) or skipped_market_check:
+        khareedo_kachua()
         becho_re()
         khareedo_re()
         # becho_re()
