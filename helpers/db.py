@@ -55,7 +55,7 @@ def log_todays_entries():
     read_db()
     for order in kite.orders():
         if order['status'] == 'COMPLETE':
-            key = db_dict[order['tradingsymbol'] + ": " + order['transaction_type'].lower()]
+            key = order['tradingsymbol'] + ": " + order['transaction_type'].lower()
             item = dict()
             item['time'] = order['exchange_timestamp'].strftime("%Y-%m-%d")
             item['price'] = order['price']
