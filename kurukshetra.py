@@ -152,6 +152,7 @@ while True:
     if (not market_closed()) or skipped_market_check:
         khareedo_kachua()
         becho_re()
+        khareedo_re()
         log_todays_entries()
         time.sleep(60)
     else:
