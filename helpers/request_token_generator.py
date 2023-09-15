@@ -2,6 +2,9 @@ from urllib.parse import urlparse, parse_qs
 
 from kiteconnect import KiteConnect
 
+from helpers.arjun import ohlc_and_put
+from helpers.krishna import get_nifty_50_list
+
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 
 token_file = open("token.txt", "r")

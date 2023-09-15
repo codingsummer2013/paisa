@@ -7,6 +7,7 @@ from helpers import db, khatabook, config_reader
 from helpers.Shakuntala import selling_price
 from helpers.arjun import read_historical_data, is_historical_data_exists, get_historical_stock, \
     ohlc_and_put
+from helpers.cachedb import put, get
 from helpers.db import log_todays_entries
 from helpers.kachua import khareedo_kachua
 from helpers.karna import execute_buy_order_with_minimum_config, execute_sell_order
@@ -27,16 +28,18 @@ def khareed_arambh(stock):
         cur_stock_name = "NSE:" + str(stock)
         # Switching off historical logic
         stock_historical = get_historical_stock(stock)
-        # if stock_historical is None:
-        #     print("Historical information is Not available, Skipping", stock)
-        #     return
+        if stock_historical is None:
+            print("Historical information is Not available, Skipping", stock)
+            return
         cur_price = kite.quote(cur_stock_name)[cur_stock_name]['last_price']
-        prev_day_closing_price = ohlc_and_put(cur_stock_name)[cur_stock_name]['ohlc']['close']
-        # historical_price = 999999
-        # historical_price = get_historical_price_to_compare(historical_price, stock_historical)
-
+        prev_day_closing_price = ohlc_and_put(stock)[cur_stock_name]['ohlc']['close']
+        historical_price = 999999
+        historical_price = get_historical_price_to_compare(historical_price, stock_historical)
         holding_price = prev_day_closing_price
         comparing_with = "Previous day"
+        if holding_price > historical_price:
+            holding_price = historical_price
+            comparing_with = "HISTORICAL price"
         for holding in holdings:
             if holding['tradingsymbol'] == stock:
                 comparing_with = "HOLDING"
@@ -67,13 +70,22 @@ def khareed_arambh(stock):
             db_price = holding_price
             self_khata_details = khatabook.get_details(stock)
             if 'buy' in self_khata_details:
-                if config_reader.get("BUY") == "MINIMUM":
+                if config_reader.get("BUY_COMPARISON") == "MINIMUM":
                     db_price = self_khata_details['buy']['minimum']
-                if config_reader.get("BUY") == "AVERAGE":
+                if config_reader.get("BUY_COMPARISON") == "AVERAGE":
                     db_price = self_khata_details['buy']['average']
                 if db_price is not None and holding_price > float(db_price):
                     holding_price = float(db_price)
-                    percentage = 0.2
+                    percentage = float(config_reader.get("KHATA_PERCENTAGE"))
+            if 'sell' in self_khata_details:
+                if config_reader.get("SELL_COMPARISON") == "MAXIMUM":
+                    db_price = self_khata_details['buy']['maximum']
+                if config_reader.get("SELL_COMPARISON") == "AVERAGE":
+                    db_price = self_khata_details['buy']['average']
+                if db_price is not None and holding_price > float(db_price):
+                    holding_price = float(db_price)
+                    percentage = float(config_reader.get("KHATA_PERCENTAGE"))
+
             change = float(float(cur_price - holding_price)) * float(100) / float(holding_price)
 
             if change < percentage:
@@ -138,6 +150,7 @@ def becho_re():
 def khareedo_re():
     nifty200 = get_nifty_50_list()
     for stock in nifty200:
+        ohlc_and_put(stock)
         khareed_arambh(stock)
     # khareed_arambh("HCLTECH")
 
@@ -149,7 +162,7 @@ def market_closed():
 
 
 while True:
-    if (not market_closed()) or skipped_market_check:
+    if True or (not market_closed()) or skipped_market_check:
         khareedo_kachua()
         becho_re()
         khareedo_re()

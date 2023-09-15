@@ -14,6 +14,7 @@ toeken_filename = os.path.join(directory, 'request_token.txt')
 token = open(toeken_filename, "r")
 kite.set_access_token(token.readline())
 
+
 def read_db():
     db_file = open(filename, "r")
     while 1:
@@ -60,10 +61,5 @@ def log_todays_entries():
             item['time'] = order['exchange_timestamp'].strftime("%Y-%m-%d")
             item['price'] = order['price']
             item['order_id'] = order['order_id']
-            list = []
-            if key in db_dict:
-                list = db_dict[key]
-            else:
-                list.append(item)
-            db_dict[key] = list
+            db_dict[key] = item
     update_db_file()

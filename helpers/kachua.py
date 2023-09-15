@@ -5,6 +5,7 @@ from kiteconnect import KiteConnect
 from helpers import samay, karna, cachedb
 from helpers.arjun import ohlc_and_put
 from helpers.karna import execute_buy_order_with_minimum_config
+from helpers.khatabook import get_details, get_price_to_buy
 
 kite = KiteConnect(api_key="tf77pivddr8pmyin")
 directory = os.path.dirname(__file__)
@@ -25,16 +26,20 @@ def khareedo_kachua():
             break
         sip_stocks.append(line.strip())
     for stock in sip_stocks:
+        khatabook_price = get_price_to_buy(stock)
         if samay.mid_day():
             sip_data = cachedb.get(stock + ": sip : Low%")
+
             if sip_data == "NA":
                 day_low_price = kite.quote("NSE:" + stock)["NSE:" + stock]['ohlc']['low']
-                karna.execute_buy_order(stock, day_low_price, 5000)
-                cachedb.put(stock + ": sip : Low%", str(day_low_price))
+                if day_low_price < khatabook_price:
+                    karna.execute_buy_order(stock, day_low_price, 5000)
+                    cachedb.put(stock + ": sip : Low%", str(day_low_price))
         else:
             sip_data = cachedb.get(stock + ": sip : One%")
             if sip_data == "NA":
                 price = kite.ohlc("NSE:" + stock)["NSE:" + stock]['ohlc']['low']
                 price_to_buy = int(price * 0.99)
-                karna.execute_buy_order(stock, price_to_buy, 5000)
-                cachedb.put(stock + ": sip : One%", str(price_to_buy))
+                if price_to_buy < khatabook_price:
+                    karna.execute_buy_order(stock, price_to_buy, 5000)
+                    cachedb.put(stock + ": sip : One%", str(price_to_buy))

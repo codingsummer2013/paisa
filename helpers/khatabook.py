@@ -45,18 +45,39 @@ stock_trades = dict()
 #     # print(stock)
 
 
+def readdb():
+    filename = os.path.join(directory, '../data/database.txt')
+    tradebook = open(filename, "r")
+    global dictionary
+    dictionary = dict()
+    while 1:
+        # reading the file
+        line = tradebook.readline()
+        if len(line.split("~~~")) < 2:
+            break
+        if len(line.split("~~~")) >= 2:
+            key = line.split("~~~")[0].strip() # jswsteel: buy:221116000711671
+            value = json.loads(line.split("~~~")[1].strip())
+            trade_key = key.split(":")[0].strip() + "||"+ key.split(":")[1].strip()
+            if trade_key not in dictionary:
+                dictionary[trade_key] = []
+            dictionary[trade_key].append(value)
+    tradebook.close()
+
+
 def get_details(stock_name):
-    buy_data = db.get(stock_name + ": buy")
-    sell_data = db.get(stock_name + ": sell")
+    readdb()
+    buy_data = dictionary.get(stock_name.lower() + "||buy")
+    sell_data = dictionary.get(stock_name.lower() + "||sell")
     stock_info = dict()
-    if buy_data != "NA":
+    if buy_data is not None:
         info_list = buy_data
         count=0
         sum=0
         minimum=999999
         maximum=0
         for info in info_list:
-            if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < int((config_reader.get("TIME_LIMIT")) * 30):
+            if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < int((config_reader.get("KHATA_BUY_DAYS"))):
                 count += 1
                 sum += float(info['price'])
                 minimum = min(minimum, float(info['price']))
@@ -67,14 +88,14 @@ def get_details(stock_name):
             buy_info["minimum"] = minimum
             buy_info["maximum"] = maximum
             stock_info["buy"] = buy_info
-    if sell_data != "NA":
+    if sell_data is not None:
         info_list = sell_data
         count=0
         sum=0
         minimum=999999
         maximum=0
         for info in info_list:
-            if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < (int(config_reader.get("TIME_LIMIT")) * 30):
+            if (datetime.today() - datetime.strptime(info["time"].strip(), "%Y-%m-%d")).days < (int(config_reader.get("KHATA_SELL_DAYS"))):
                 count += 1
                 sum += float(info['price'])
                 minimum = min(minimum, float(info['price']))
@@ -86,3 +107,26 @@ def get_details(stock_name):
             sell_info["maximum"] = maximum
             stock_info["sell"] = sell_info
     return stock_info
+
+
+def get_price_to_buy(stock):
+    price = 9999999
+    self_khata_details = get_details(stock.lower())
+    if 'buy' in self_khata_details:
+        if config_reader.get("BUY_COMPARISON") == "MINIMUM":
+            db_price = self_khata_details['buy']['minimum']
+        if config_reader.get("BUY_COMPARISON") == "AVERAGE":
+            db_price = self_khata_details['buy']['average']
+        if db_price < price:
+            price = db_price
+    if 'sell' in self_khata_details:
+        if config_reader.get("SELL_COMPARISON") == "MAXIMUM":
+            db_price = self_khata_details['sell']['maximum']
+        if config_reader.get("SELL_COMPARISON") == "AVERAGE":
+            db_price = self_khata_details['sell']['average']
+        if db_price < price:
+            price = db_price
+    return price
+
+# readdb()
+# get_details("reliance")

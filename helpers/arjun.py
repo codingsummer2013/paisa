@@ -123,18 +123,32 @@ def update_historical_file():
 
 
 def ohlc_and_put(stockname):
-    output = kite.ohlc(stockname)
+    read_historical_data()
+    output = kite.ohlc("NSE:"+stockname)
     date_string = date.today().strftime("%Y-%m-%d")
+    stock_exist_in_historical = False
     for stock in historical_row_data:
-        if stockname == "NSE:" + stock["name"]:
+        if stockname == stock["name"]:
             data_exists = False
+            stock_exist_in_historical = True
             for record in stock["price"]:
                 if record['time'] == date_string:
                     data_exists = True
             if not data_exists:
                 cur_object = dict()
                 cur_object["time"] = date_string
-                cur_object["price"] = output[stockname]['ohlc']['close']
+                cur_object["price"] = output["NSE:" + stockname]['ohlc']['close']
                 stock["price"].append(cur_object)
                 update_historical_file()
+                return
+    if stock_exist_in_historical is False:
+        cur_object = dict()
+        cur_object["time"] = date_string
+        cur_object["price"] = output["NSE:"+stockname]['ohlc']['close']
+        stock = dict()
+        stock["price"] = []
+        stock["price"].append(cur_object)
+        stock["name"] = stockname
+        historical_row_data.append(stock)
+        update_historical_file()
     return output

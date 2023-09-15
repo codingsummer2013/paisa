@@ -1,6 +1,6 @@
-AAJ~~~18-11-2022
-RELIANCE: sip : One%~~~2556
-AAJ~~~18-11-2022
-TTKPRESTIG: sip : One%~~~856
-RELIANCE: sip : Low%~~~2573.4
-TTKPRESTIG: sip : Low%~~~865.6
+AAJ~~~14-12-2022
+AAJ~~~14-12-2022
+RELIANCE: sip : One%~~~2597
+TTKPRESTIG: sip : One%~~~823
+RELIANCE: sip : Low%~~~2616
+TTKPRESTIG: sip : Low%~~~831.15
